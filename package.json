@@ -16,6 +16,11 @@
     "dev": "tsc && node dist/index.js",
     "postinstall": "prisma generate"
   },
+  "files": [
+    "dist/",
+    "prisma/schema.prisma",
+    "node_modules/@prisma/client/"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
