@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String @unique
+  memories  Memory[]
+  apps      App[]
+}
+
+model App {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   String
+  memories  Memory[]
+}
+
+model Memory {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  app       App      @relation(fields: [appId], references: [id])
+  appId     String
+  content   String
+  state     String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  categories MemoryCategory[]
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  memories  MemoryCategory[]
+}
+
+model MemoryCategory {
+  memory    Memory   @relation(fields: [memoryId], references: [id])
+  memoryId  String
+  category  Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@id([memoryId, categoryId])
+} 
