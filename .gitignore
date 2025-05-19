@@ -1,3 +1,7 @@
 node_modules/
 dist/
-build/ 
+build/
+prisma/dev.db 
+.env
+openmemory.db
+memoer.db

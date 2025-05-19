@@ -1,10 +1,13 @@
 {
   "name": "memoer-mcp",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "MCP server for Memoer",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "memoer-mcp": "dist/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",

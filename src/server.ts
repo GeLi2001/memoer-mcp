@@ -1,8 +1,38 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { PrismaClient } from "@prisma/client";
+import { execSync } from "child_process";
 import { randomUUID } from "crypto";
+import path from "path";
 import { z } from "zod";
+
+/**
+ * Resolves and sets DATABASE_URL for Prisma, then ensures DB is initialized.
+ * @param userDbPath Optional user-defined path to the SQLite file.
+ * @returns The absolute resolved .db file path
+ */
+export function setupPrismaDatabase(userDbPath?: string): string {
+  // Priority: user param > DATABASE_URL > fallback
+  const rawPath =
+    userDbPath ||
+    (process.env.DATABASE_URL
+      ? process.env.DATABASE_URL.replace(/^file:/, "")
+      : undefined) ||
+    "./memoer.db";
+
+  const absPath = path.resolve(rawPath); // Get absolute path
+  process.env.DATABASE_URL = `file:${absPath}`; // Prisma expects "file:/..."
+
+  console.error(`[MCP] Using DATABASE_URL: ${process.env.DATABASE_URL}`);
+
+  // Create DB and schema if missing
+  execSync("npx prisma db push", { stdio: "inherit" });
+
+  return absPath;
+}
+
+// Set up the database using the new function
+setupPrismaDatabase();
 
 const prisma = new PrismaClient();
 
@@ -15,7 +45,7 @@ const server = new McpServer({
 await prisma.user.upsert({
   where: { name: "default-user" },
   update: {
-    name: "Default User"
+    name: "default-user"
   },
   create: {
     id: randomUUID(),
@@ -27,13 +57,15 @@ await prisma.user.upsert({
 server.tool(
   "createMemory",
   {
-    content: z.string(),
-    appId: z.string()
+    content: z
+      .string()
+      .describe("the content/memory to store into memoer-mcp local storage"),
+    appName: z.string().describe("the name of the app/agent you are")
   },
-  async ({ content, appId }: { content: string; appId: string }) => {
+  async ({ content, appName }: { content: string; appName: string }) => {
     try {
       // Format appId to lowercase with underscores
-      const formattedAppId = appId.toLowerCase().replace(/\s+/g, "_");
+      const formattedAppId = appName.toLowerCase().replace(/\s+/g, "_");
 
       // Check if appId exists, if not create it
       await prisma.app.upsert({
@@ -101,23 +133,23 @@ server.tool(
 server.tool(
   "getMemories",
   {
-    appId: z.string().optional(),
+    appName: z.string().optional(),
     category: z.string().optional(),
     limit: z.number().optional()
   },
   async ({
-    appId,
+    appName,
     category,
     limit = 10
   }: {
-    appId?: string;
+    appName?: string;
     category?: string;
     limit?: number;
   }) => {
     try {
       const memories = await prisma.memory.findMany({
         where: {
-          ...(appId && { appId }),
+          ...(appName && { appName }),
           ...(category && {
             categories: {
               some: {
