@@ -165,7 +165,7 @@ async function registerTools(server: McpServer, prisma: PrismaClient) {
 }
 
 async function main() {
-  setupPrismaDatabase(); // fire-and-forget: no blocking
+  // setupPrismaDatabase(); // fire-and-forget: no blocking
 
   const prisma = new PrismaClient();
 
@@ -179,15 +179,15 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport); // 🚀 Send server_info immediately
 
-  // Optional: do upsert AFTER connection
-  await prisma.user.upsert({
-    where: { name: "default-user" },
-    update: { name: "default-user" },
-    create: {
-      id: randomUUID(),
-      name: "default-user"
-    }
-  });
+  // // Optional: do upsert AFTER connection
+  // await prisma.user.upsert({
+  //   where: { name: "default-user" },
+  //   update: { name: "default-user" },
+  //   create: {
+  //     id: randomUUID(),
+  //     name: "default-user"
+  //   }
+  // });
 }
 
 main().catch((err) => {
