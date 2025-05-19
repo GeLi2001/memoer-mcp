@@ -4,8 +4,13 @@ import { PrismaClient } from "@prisma/client";
 import { execSync } from "child_process";
 import { randomUUID } from "crypto";
 import path from "path";
+import { fileURLToPath } from "url";
 import { z } from "zod";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const schemaPath = path.join(__dirname, "../prisma/schema.prisma");
 /**
  * Resolves and sets DATABASE_URL for Prisma, then ensures DB is initialized.
  * @param userDbPath Optional user-defined path to the SQLite file.
@@ -26,7 +31,6 @@ export function setupPrismaDatabase(userDbPath?: string): string {
   console.error(`[MCP] Using DATABASE_URL: ${process.env.DATABASE_URL}`);
 
   // Create DB and schema if missing
-  const schemaPath = path.join(import.meta.dirname, "../prisma/schema.prisma");
   execSync(`npx prisma db push --schema=${schemaPath}`, { stdio: "inherit" });
 
   return absPath;
