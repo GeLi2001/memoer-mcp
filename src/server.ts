@@ -26,7 +26,9 @@ export function setupPrismaDatabase(userDbPath?: string): string {
   console.error(`[MCP] Using DATABASE_URL: ${process.env.DATABASE_URL}`);
 
   // Create DB and schema if missing
-  execSync("npx prisma db push", { stdio: "inherit" });
+  execSync("npx prisma db push --schema=prisma/schema.prisma", {
+    stdio: "inherit"
+  });
 
   return absPath;
 }
