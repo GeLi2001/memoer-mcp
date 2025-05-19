@@ -9,10 +9,12 @@
     "memoer-mcp": "dist/index.js"
   },
   "scripts": {
+    "prepublishOnly": "prisma generate && npm run build",
     "prepare": "prisma generate",
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsc && node dist/index.js"
+    "dev": "tsc && node dist/index.js",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
