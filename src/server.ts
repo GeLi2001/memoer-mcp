@@ -32,7 +32,7 @@ export function setupPrismaDatabase(userDbPath?: string): string {
 
   // Create DB and schema if missing
   execSync(`npx prisma db push --schema=${schemaPath}`, {
-    stdio: ["ignore", "pipe", "pipe"]
+    stdio: ["ignore", "ignore", "inherit"]
   });
 
   return absPath;
