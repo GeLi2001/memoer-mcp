@@ -118,7 +118,11 @@ async function registerTools(server: McpServer, prisma: PrismaClient) {
       try {
         const memories = await prisma.memory.findMany({
           where: {
-            ...(appName && { appName }),
+            ...(appName && {
+              app: {
+                name: appName
+              }
+            }),
             ...(category && {
               categories: {
                 some: {
