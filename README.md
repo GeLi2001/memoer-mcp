@@ -1,8 +1,3 @@
-To provide a more comprehensive example and configuration for using `memoer-mcp`, let's update the README and provide a sample configuration for the `mcp config json`. Here’s how you can structure it:
-
-### Updated README Example
-
-````markdown
 # @memoer-mcp
 
 A minimal, pluggable memory management library for Node.js, inspired by OpenMemory. Supports local SQLite storage, semantic search (Qdrant), and OpenAI embeddings. No web server, no frontend—just a programmatic API.
@@ -18,10 +13,10 @@ A minimal, pluggable memory management library for Node.js, inspired by OpenMemo
 ## Getting Started
 
 1. **Install dependencies**:
+
    ```sh
    npm install
    ```
-````
 
 2. **Initialize the database**:
 
